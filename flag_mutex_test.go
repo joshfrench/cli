@@ -69,3 +69,50 @@ func TestFlagMutuallyExclusiveFlags(t *testing.T) {
 		t.Errorf("Invalid error string %v", err1)
 	}
 }
+
+func TestFlagMutuallyExclusiveFlagCategories(t *testing.T) {
+	flag := &IntFlag{
+		Name:     "i",
+		Aliases:  []string{"ai"},
+		Category: "one",
+	}
+	cmd := &Command{
+		MutuallyExclusiveFlags: []MutuallyExclusiveFlags{
+			{
+				Flags: [][]Flag{
+					{
+						flag,
+						&StringFlag{
+							Name:     "j",
+							Category: "one",
+						},
+					},
+				},
+			},
+			{
+				Flags: [][]Flag{
+					{
+						&BoolFlag{
+							Name:     "k",
+							Category: "two",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	err := cmd.Run(buildTestContext(t), []string{"foo"})
+	assert.NoError(t, err)
+
+	flag.Category = "two"
+
+	err = cmd.Run(buildTestContext(t), []string{"foo"})
+	if err == nil {
+		t.Error("Expected mutual exclusion error")
+	} else if err1, ok := err.(*mutuallyExclusiveGroupCategories); !ok {
+		t.Errorf("Got invalid error %v", err)
+	} else if !strings.Contains(err1.Error(), "mutually exclusive options i and j must belong to the same category") {
+		t.Errorf("Invalid error string %v", err1)
+	}
+}

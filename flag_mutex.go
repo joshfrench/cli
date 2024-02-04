@@ -16,9 +16,18 @@ type MutuallyExclusiveFlags struct {
 func (grp MutuallyExclusiveFlags) check(cmd *Command) error {
 	oneSet := false
 	e := &mutuallyExclusiveGroup{}
+	c := &mutuallyExclusiveGroupCategories{}
 
 	for _, grpf := range grp.Flags {
 		for _, f := range grpf {
+
+			if cf, ok := f.(CategorizableFlag); ok {
+				c.categories[cf.GetCategory()] = append(c.categories[cf.GetCategory()], f.Names()[0])
+				if len(c.categories) > 1 {
+					return c
+				}
+			}
+
 			for _, name := range f.Names() {
 				if cmd.IsSet(name) {
 					if oneSet {

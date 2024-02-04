@@ -99,6 +99,18 @@ func (e *mutuallyExclusiveGroupRequiredFlag) Error() string {
 	return fmt.Sprintf("one of these flags needs to be provided: %s", strings.Join(missingFlags, ", "))
 }
 
+type mutuallyExclusiveGroupCategories struct {
+	categories map[string][]string
+}
+
+func (e *mutuallyExclusiveGroupCategories) Error() string {
+	flags := []string{}
+	for _, f := range e.categories {
+		flags = append(flags, f...)
+	}
+	return fmt.Sprintf("mutually exclusive options %s and %s must belong to the same category", strings.Join(flags[:len(flags)-1], ", "), flags[len(flags)-1])
+}
+
 // ErrorFormatter is the interface that will suitably format the error output
 type ErrorFormatter interface {
 	Format(s fmt.State, verb rune)

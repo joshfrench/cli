@@ -1531,16 +1531,17 @@ func TestCategorizedHelp(t *testing.T) {
 				Flags: [][]Flag{
 					{
 						&StringFlag{
-							Name: "mutexstd",
-						},
-						&IntFlag{
-							Name:     "mutexcat1",
+							Name:     "m1",
 							Category: "cat1",
 						},
 					},
+				},
+			},
+			{
+				Flags: [][]Flag{
 					{
-						&IntFlag{
-							Name:     "mutexcat2",
+						&StringFlag{
+							Name:     "m2",
 							Category: "cat2",
 						},
 					},
@@ -1575,18 +1576,17 @@ COMMANDS:
             for one command
 
 GLOBAL OPTIONS:
-   --help, -h        show help (default: false)
-   --mutexstd value  
-   --strd value      
+   --help, -h    show help (default: false)
+   --strd value  
 
    cat1
 
    --intd value, --altd1 value, --altd2 value  (default: 0)
-   --mutexcat1 value                           (default: 0)
+   --m1 value                                  
 
    cat2
 
-   --mutexcat2 value  (default: 0)
+   --m2 value  
 
 `, output.String())
 }
